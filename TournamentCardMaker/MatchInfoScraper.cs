@@ -41,6 +41,13 @@ public class MatchInfoScraper(string tournamentId, string date)
 
             foreach (var matchNode in matchNodes)
             {
+                var warnings = matchNode.SelectNodes(".//span[contains(@class,'tag--warning')]");
+                if (warnings?.Count > 0)
+                {
+                    Console.WriteLine("Skipping match with warning tag");
+                    continue;
+                }
+
                 var titleItems = matchNode.SelectNodes(".//li[@class='match__header-title-item']");
                 var playerItems = matchNode.SelectNodes(".//div[@class='match__row-title-value']");
                 var matchInfo = new MatchInfo
