@@ -4,14 +4,14 @@ using HtmlAgilityPack;
 namespace TournamentCardMaker;
 
 
-public class MatchInfoScraper(string tournamentId)
+public class MatchInfoScraper(string tournamentId, string date)
 {
     public async Task<MatchInfo[]> GetMatchesAsync()
     {
         var result = new List<MatchInfo>();
         var client = HttpClientFactory.CreateClient();
 
-        var response = await client.GetAsync($"https://mijnknltb.toernooi.nl/tournament/{tournamentId}/matches/{DateTime.Now.AddDays(1):yyyyMMdd}");
+        var response = await client.GetAsync($"https://mijnknltb.toernooi.nl/tournament/{tournamentId}/matches/{date}");
         var scheduleHtml = await response.Content.ReadAsStringAsync();
         scheduleHtml.Replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\"\\>");
         var doc = new HtmlDocument();

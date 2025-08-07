@@ -26,6 +26,7 @@ public class CardMaker
             for (int column = 2; column <= 4; column++)
             {
                 ws.Range(row + 1, column, row + 2, column).Merge();
+                ws.Range(row + 3, column, row + 4, column).Merge();
             }
 
             ws.Range(row + 1, 2, row + 4, 4).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
@@ -54,7 +55,7 @@ public class CardMaker
 
         SetStyle(ws);
 
-        workbook.SaveAs("matches.xlsx");
+        workbook.SaveAs($"{fileName}.xlsx");
     }
 
     private static void SetStyle(IXLWorksheet ws)
