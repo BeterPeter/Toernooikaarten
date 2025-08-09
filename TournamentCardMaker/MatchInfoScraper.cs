@@ -49,16 +49,21 @@ public class MatchInfoScraper(string tournamentId, string date)
                 }
 
                 var titleItems = matchNode.SelectNodes(".//li[@class='match__header-title-item']");
-                var playerItems = matchNode.SelectNodes(".//div[@class='match__row-title-value']");
+                var teams = matchNode
+                    .SelectSingleNode(".//div[@class='match__row-wrapper']")
+                    .SelectNodes("./div")
+                    ?.Select(n => n.SelectNodes(".//div[@class='match__row-title-value']")
+                        ?.Select(x => HttpUtility.HtmlDecode(x.InnerText.Trim()))
+                        ?.ToArray() ?? [])
+                    ?.ToArray();
                 var matchInfo = new MatchInfo
                 {
                     Time = time ?? string.Empty,
                     Title = titleItems != null && titleItems.Count > 0
                         ? string.Join(", ", titleItems.Select(n => HttpUtility.HtmlDecode(n.InnerText.Trim())))
                         : string.Empty,
-                    Players = playerItems
-                        ?.Select(x => HttpUtility.HtmlDecode(x.InnerText.Trim()))
-                        ?.ToArray() ?? [],
+                    TopPlayers = teams?.Length > 0 ? teams[0] : [],
+                    BottomPlayers = teams?.Length > 1 ? teams[1] : [],
                 };
                 result.Add(matchInfo);
             }

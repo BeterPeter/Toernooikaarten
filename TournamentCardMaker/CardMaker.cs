@@ -18,10 +18,6 @@ public class CardMaker
             ws.Cell(row, 1).Value = $"{match.Title} ({match.Time})";
             ws.Range(row, 1, row, 4).Merge().Style.Font.Bold = true;
 
-            // Horizontal line (border)
-            ws.Range(row, 1, row, 4).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-            ws.Range(row, 1, row + 4, 4).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-
             // merge score cells (columns 2-4)
             for (int column = 2; column <= 4; column++)
             {
@@ -29,25 +25,16 @@ public class CardMaker
                 ws.Range(row + 3, column, row + 4, column).Merge();
             }
 
+            // borders
+            ws.Range(row, 1, row, 4).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            ws.Range(row, 1, row + 4, 4).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
             ws.Range(row + 1, 2, row + 4, 4).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+            ws.Range(row + 1, 2, row + 4, 4).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            ws.Cell(row + 2, 1).Style.Border.BottomBorder = XLBorderStyleValues.Thin;
             row++;
 
-            match.Players = match.Players.Length == 0
-                ? [.. Enumerable.Repeat(string.Empty, 4)]
-                : match.Players.Length == 2
-                ? [match.Players[0], string.Empty, match.Players[1], string.Empty]
-                : match.Players;
-            
-            for (int j = 0; j < match.Players.Length; j++)
-            {
-                ws.Cell(row, 1).Value = match.Players[j];
-                if (j % 2 == 0) // Every two players, add a border
-                {
-                    ws.Range(row, 1, row + 1, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                }
-
-                row++;
-            }
+            row = FillPlayerCells(ws, match.TopPlayers, row);
+            row = FillPlayerCells(ws, match.BottomPlayers, row);
 
             if (i % 4 != 3)
                 row++;
@@ -56,6 +43,13 @@ public class CardMaker
         SetStyle(ws);
 
         workbook.SaveAs($"{fileName}.xlsx");
+    }
+
+    private static int FillPlayerCells(IXLWorksheet ws, string[] players, int row)
+    {
+        ws.Cell(row++, 1).Value = players.Length > 0 ? players[0] : string.Empty;
+        ws.Cell(row++, 1).Value = players.Length > 1 ? players[1] : string.Empty;
+        return row;
     }
 
     private static void SetStyle(IXLWorksheet ws)
