@@ -12,17 +12,37 @@ internal class Program
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
-        var date = GetSettingWithDefault("Settings:Date", DateTime.Now.AddDays(1).ToString("yyyyMMdd"));
-        var tournamentId = GetSettingWithDefault("Settings:Tournament", "40880086-51bf-4646-ac76-0efa38c30885");
+        var inputFileName = GetSettingWithDefault("Settings:InputHtmlFileName", string.Empty);
+        MatchInfoScraper scraper;
+        if (!string.IsNullOrEmpty(inputFileName))
+        {
+            if (!File.Exists(inputFileName) || !Path.GetExtension(inputFileName).Equals(".html", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine($"The specified input file {inputFileName} does not exist or is not a valid HTML file. Please check your settings in appsettings.json");
+                Console.WriteLine("Specify the html file including extension, for example: schedule.html");
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                return;
+            }
+
+            var inputFile = await File.ReadAllTextAsync(inputFileName) ?? string.Empty;
+            scraper = new MatchInfoScraper(inputFile);
+        }
+        else
+        {
+            var date = GetSettingWithDefault("Settings:Date", DateTime.Now.AddDays(1).ToString("yyyyMMdd"));
+            var tournamentId = GetSettingWithDefault("Settings:Tournament", "40880086-51bf-4646-ac76-0efa38c30885");
+            scraper = new MatchInfoScraper(tournamentId, date);
+        }
 
         MatchInfo[] matchInfo;
         try
         {
-            matchInfo = await new MatchInfoScraper(tournamentId, date).GetMatchesAsync();
+            matchInfo = await scraper.GetMatchesAsync();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error occurred while scraping match-info for {tournamentId} with date {date}: {ex.Message}");
+            Console.WriteLine($"An error occurred while scraping match-info: {ex.Message}");
             Console.WriteLine("Please check your settings in appsettings.json");
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
