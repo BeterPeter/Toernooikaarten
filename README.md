@@ -3,11 +3,14 @@ De online toernooiplanner van de knltb biedt niet meer de mogelijkheid om wedstr
 Het is eenvoudig te gebruiken:
 - download de .exe en .json
 - pas de .json aan voor jouw toernooi en sla hem op
+- browse op mijnknltb.toernooi.nl naar jouw toernooi & de wedstrijddag waarvoor je kaartjes wil maken
+- sla de pagina op in de folder waarin de .exe en .json staan onder de naam schedule.html (is aanpasbaar in de .json)
 - dubbelklik op de .exe, en er verschijnt een excel-bestand met wedstrijdkaartjes.
 
 In appsettings.json kun je de volgende instellingen vinden:
-- Tournament: als je op mijnknltb.toernooi.nl naar jouw toernooi browst, is dit de reeks cijfers en letters achter https://mijnknltb.toernooi.nl/tournament/.
-- Date: als je voor een specifieke datum wilt afdrukken. De default waarde is morgen, en deze setting heeft een format van "YYYYMMDD" (bijvoorbeeld "20250309" voor 9 maart 2025).
+- Tournament: niet meer relevant, maar komt in de toekomst waarschijnlijk terug.
+- Date: niet meer relevant, maar komt in de toekomst waarschijnlijk terug.
+- InputHtmlFileName: de naam van de opgeslagen html pagina waaruit de kaartjes gegenereerd worden (default schedule.html).
 - OutputFilename: hoe je wilt dat het resultaat-bestand genoemd wordt. Default is "matches". Dus dan wordt een bestand "matches.xlsx" gegenereerd.
 
 Let op! Zorg dat je het gegenereerde Excel bestand afsluit voordat je een nieuwe genereert met dezelfde naam. Anders gaat het genereren mis.
